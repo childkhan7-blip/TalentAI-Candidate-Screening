@@ -1,0 +1,19 @@
+[project]
+name = "talentai"
+version = "0.1.0"
+description = "AI-powered HR Candidate Screening Agent"
+requires-python = "==3.12.*"
+
+dependencies = [
+    "fastapi[standard]",
+    "uvicorn",
+    "python-multipart",
+    "python-dotenv",
+    "google-genai",
+    "pypdf",
+    "fastapi-mail",
+    "email-validator"
+]
+
+[tool.fastapi]
+entrypoint = "main:app"
