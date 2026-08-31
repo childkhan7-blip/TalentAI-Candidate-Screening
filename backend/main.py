@@ -583,50 +583,264 @@ async def upload_cv(
 # AI CV SCORING
 # =========================================================
 
+# @app.post("/score-cv")
+# async def score_cv(
+
+#     file: UploadFile = File(...),
+
+#     job_requirements: str = ""
+
+# ):
+
+#     # -----------------------------------------------------
+#     # Check PDF
+#     # -----------------------------------------------------
+
+#     if file.content_type != "application/pdf":
+
+#         raise HTTPException(
+#             status_code=400,
+#             detail="Please upload a PDF CV."
+#         )
+
+
+#     # -----------------------------------------------------
+#     # Read PDF
+#     # -----------------------------------------------------
+
+#     file_content = await file.read()
+
+#     try:
+
+#         pdf = PdfReader(
+#             io.BytesIO(file_content)
+#         )
+
+#     except Exception:
+
+#         raise HTTPException(
+#             status_code=400,
+#             detail="Could not read the PDF file."
+#         )
+
+
+#     # -----------------------------------------------------
+#     # Extract CV text
+#     # -----------------------------------------------------
+
+#     cv_text = ""
+
+#     for page in pdf.pages:
+
+#         text = page.extract_text()
+
+#         if text:
+
+#             cv_text += text + "\n"
+
+
+#     # -----------------------------------------------------
+#     # Check CV text
+#     # -----------------------------------------------------
+
+#     if not cv_text.strip():
+
+#         raise HTTPException(
+#             status_code=400,
+#             detail="Could not extract text from CV."
+#         )
+
+
+#     # =====================================================
+#     # GEMINI PROMPT
+#     # =====================================================
+
+#     prompt = f"""
+
+# You are an HR Candidate Screening AI.
+
+# Your job is to analyze a candidate's CV
+# against the provided job requirements.
+
+# JOB REQUIREMENTS:
+
+# {job_requirements}
+
+
+# CANDIDATE CV:
+
+# {cv_text}
+
+
+# Evaluate the candidate based on:
+
+# 1. Skills match
+# 2. Relevant experience
+# 3. Education
+# 4. Overall suitability
+
+
+# Return ONLY valid JSON.
+
+# Use exactly this structure:
+
+# {{
+#     "candidate_name": "candidate name",
+#     "score": 85,
+#     "matched_skills": [
+#         "Python",
+#         "FastAPI"
+#     ],
+#     "missing_skills": [
+#         "Machine Learning"
+#     ],
+#     "experience_summary": "short summary",
+#     "recommendation": "Interview"
+# }}
+
+
+# IMPORTANT:
+
+# The score must be a number between 0 and 100.
+
+# Recommendation must be exactly one of:
+
+# "Interview"
+
+# "Maybe"
+
+# "Reject"
+
+# """
+
+
+#     # =====================================================
+#     # CALL GEMINI
+#     # =====================================================
+
+#     try:
+
+#         response = client.models.generate_content(
+
+#             model="gemini-2.5-flash",
+
+#             contents=prompt
+
+#         )
+
+#     except Exception as e:
+
+#         raise HTTPException(
+
+#             status_code=500,
+
+#             detail=f"Gemini API error: {str(e)}"
+
+#         )
+
+
+#     # =====================================================
+#     # GET AI RESPONSE
+#     # =====================================================
+
+#     ai_text = response.text.strip()
+
+
+#     # =====================================================
+#     # REMOVE MARKDOWN JSON FENCES
+#     # =====================================================
+
+#     if ai_text.startswith("```"):
+
+#         ai_text = ai_text.replace(
+#             "```json",
+#             ""
+#         )
+
+#         ai_text = ai_text.replace(
+#             "```",
+#             ""
+#         )
+
+#         ai_text = ai_text.strip()
+
+
+#     # =====================================================
+#     # PARSE JSON
+#     # =====================================================
+
+#     try:
+
+#         result = json.loads(ai_text)
+
+#     except json.JSONDecodeError:
+
+#         raise HTTPException(
+
+#             status_code=500,
+
+#             detail="Gemini returned invalid JSON."
+
+#         )
+
+
+#     # =====================================================
+#     # RETURN RESULT
+#     # =====================================================
+
+#     return {
+
+#         "filename": file.filename,
+
+#         "screening": result
+
+#     }
+
 @app.post("/score-cv")
 async def score_cv(
-
     file: UploadFile = File(...),
-
     job_requirements: str = ""
-
 ):
 
-    # -----------------------------------------------------
-    # Check PDF
-    # -----------------------------------------------------
+    # =====================================================
+    # CHECK PDF
+    # =====================================================
 
     if file.content_type != "application/pdf":
-
         raise HTTPException(
             status_code=400,
             detail="Please upload a PDF CV."
         )
 
+    # =====================================================
+    # CHECK JOB REQUIREMENTS
+    # =====================================================
 
-    # -----------------------------------------------------
-    # Read PDF
-    # -----------------------------------------------------
+    if not job_requirements.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Please provide job requirements."
+        )
+
+    # =====================================================
+    # READ PDF
+    # =====================================================
 
     file_content = await file.read()
 
     try:
-
         pdf = PdfReader(
             io.BytesIO(file_content)
         )
-
     except Exception:
-
         raise HTTPException(
             status_code=400,
             detail="Could not read the PDF file."
         )
 
-
-    # -----------------------------------------------------
-    # Extract CV text
-    # -----------------------------------------------------
+    # =====================================================
+    # EXTRACT CV TEXT
+    # =====================================================
 
     cv_text = ""
 
@@ -635,50 +849,133 @@ async def score_cv(
         text = page.extract_text()
 
         if text:
-
             cv_text += text + "\n"
 
-
-    # -----------------------------------------------------
-    # Check CV text
-    # -----------------------------------------------------
+    # =====================================================
+    # CHECK CV TEXT
+    # =====================================================
 
     if not cv_text.strip():
-
         raise HTTPException(
             status_code=400,
             detail="Could not extract text from CV."
         )
 
-
     # =====================================================
-    # GEMINI PROMPT
+    # AI PROMPT
     # =====================================================
 
     prompt = f"""
+You are a strict HR Candidate Screening AI.
 
-You are an HR Candidate Screening AI.
+Your task is to evaluate ONE candidate's CV
+against ONE specific job requirement.
 
-Your job is to analyze a candidate's CV
-against the provided job requirements.
+You MUST use the JOB REQUIREMENTS provided below.
 
-JOB REQUIREMENTS:
+====================================================
+JOB REQUIREMENTS
+====================================================
 
 {job_requirements}
 
-
-CANDIDATE CV:
+====================================================
+CANDIDATE CV
+====================================================
 
 {cv_text}
 
+====================================================
+IMPORTANT SCREENING RULES
+====================================================
 
-Evaluate the candidate based on:
+RULE 1:
+The JOB REQUIREMENTS are the source of truth.
 
-1. Skills match
-2. Relevant experience
-3. Education
-4. Overall suitability
+RULE 2:
+Do NOT assume that the candidate is applying for
+a different job.
 
+RULE 3:
+Do NOT automatically treat every skill in the CV
+as a matched skill.
+
+RULE 4:
+"matched_skills" must contain ONLY skills,
+qualifications, or requirements that are relevant
+to the JOB REQUIREMENTS AND are actually supported
+by the candidate's CV.
+
+RULE 5:
+"missing_skills" must contain important skills,
+qualifications, or requirements from the JOB REQUIREMENTS
+that are NOT supported by the candidate's CV.
+
+RULE 6:
+If the candidate has Python, FastAPI, Docker,
+LangChain, etc. but the job requires English teaching
+or Mathematics teaching, those programming skills
+MUST NOT be placed in "matched_skills" unless the
+job requirements explicitly require them.
+
+RULE 7:
+If the candidate is clearly unsuitable for the job,
+give a low score.
+
+RULE 8:
+The score must represent how well the candidate
+matches THIS SPECIFIC JOB, not how impressive the CV is.
+
+RULE 9:
+Do not reuse the requirements or evaluation from
+another candidate or previous request.
+
+RULE 10:
+Analyze the CV and JOB REQUIREMENTS independently
+for every request.
+
+====================================================
+SCORING GUIDELINES
+====================================================
+
+90-100:
+Excellent match. Candidate satisfies almost all
+important requirements.
+
+75-89:
+Strong match with only minor gaps.
+
+50-74:
+Moderate match with noticeable gaps.
+
+25-49:
+Weak match.
+
+0-24:
+Very poor match or unrelated candidate.
+
+====================================================
+RECOMMENDATION
+====================================================
+
+Use exactly one:
+
+"Interview"
+"Maybe"
+"Reject"
+
+Generally:
+
+75-100 -> Interview
+40-74 -> Maybe
+0-39 -> Reject
+
+However, use your judgment based on the actual
+requirements and candidate.
+
+====================================================
+OUTPUT
+====================================================
 
 Return ONLY valid JSON.
 
@@ -686,58 +983,34 @@ Use exactly this structure:
 
 {{
     "candidate_name": "candidate name",
-    "score": 85,
-    "matched_skills": [
-        "Python",
-        "FastAPI"
-    ],
+    "score": 10,
+    "matched_skills": [],
     "missing_skills": [
-        "Machine Learning"
+        "English teaching",
+        "Mathematics teaching"
     ],
-    "experience_summary": "short summary",
-    "recommendation": "Interview"
+    "experience_summary": "The candidate has a software/AI background but does not demonstrate relevant English or Mathematics teaching experience.",
+    "recommendation": "Reject"
 }}
-
 
 IMPORTANT:
 
-The score must be a number between 0 and 100.
-
-Recommendation must be exactly one of:
-
-"Interview"
-
-"Maybe"
-
-"Reject"
-
+- score MUST be a number between 0 and 100.
+- matched_skills MUST come from the JOB REQUIREMENTS.
+- missing_skills MUST come from the JOB REQUIREMENTS.
+- Do not put unrelated CV skills into matched_skills.
+- Do not invent experience.
+- Return ONLY JSON.
 """
-
 
     # =====================================================
     # CALL GEMINI
     # =====================================================
 
-    try:
-
-        response = client.models.generate_content(
-
-            model="gemini-2.5-flash",
-
-            contents=prompt
-
-        )
-
-    except Exception as e:
-
-        raise HTTPException(
-
-            status_code=500,
-
-            detail=f"Gemini API error: {str(e)}"
-
-        )
-
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
 
     # =====================================================
     # GET AI RESPONSE
@@ -745,9 +1018,8 @@ Recommendation must be exactly one of:
 
     ai_text = response.text.strip()
 
-
     # =====================================================
-    # REMOVE MARKDOWN JSON FENCES
+    # REMOVE MARKDOWN JSON
     # =====================================================
 
     if ai_text.startswith("```"):
@@ -764,7 +1036,6 @@ Recommendation must be exactly one of:
 
         ai_text = ai_text.strip()
 
-
     # =====================================================
     # PARSE JSON
     # =====================================================
@@ -776,24 +1047,18 @@ Recommendation must be exactly one of:
     except json.JSONDecodeError:
 
         raise HTTPException(
-
             status_code=500,
-
             detail="Gemini returned invalid JSON."
-
         )
-
 
     # =====================================================
     # RETURN RESULT
     # =====================================================
 
     return {
-
         "filename": file.filename,
-
+        "job_requirements_used": job_requirements,
         "screening": result
-
     }
 
 
