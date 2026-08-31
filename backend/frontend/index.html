@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>TalentAI | Candidate Screening</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f7fb;
+        color: #172033;
+    }
+
+    button,
+    input,
+    textarea {
+        font-family: inherit;
+    }
+
+    nav {
+        height: 70px;
+        background: white;
+        border-bottom: 1px solid #e5e9f2;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 7%;
+    }
+
+    .logo {
+        font-size: 23px;
+        font-weight: 800;
+        color: #315efb;
+    }
+
+    .logo span {
+        color: #172033;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        font-size: 13px;
+        color: #68748a;
+    }
+
+    .status-dot {
+        width: 9px;
+        height: 9px;
+        background: #20b26b;
+        border-radius: 50%;
+    }
+
+    main {
+        width: 88%;
+        max-width: 1200px;
+        margin: 45px auto;
+    }
+
+    .hero {
+        margin-bottom: 30px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .hero p {
+        color: #68748a;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 25px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e6eaf1;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(25, 40, 70, 0.05);
+    }
+
+    .card-title {
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .card-subtitle {
+        color: #778196;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 22px;
+    }
+
+    /* =========================
+       UPLOAD
+    ========================= */
+
+    .upload-box {
+        border: 2px dashed #cbd3e3;
+        border-radius: 13px;
+
+        padding: 38px 20px;
+        text-align: center;
+
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .upload-box:hover {
+        border-color: #315efb;
+        background: #f8faff;
+    }
+
+    .upload-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+    }
+
+    .upload-box h3 {
+        font-size: 16px;
+        margin-bottom: 7px;
+    }
+
+    .upload-box p {
+        color: #7b8497;
+        font-size: 13px;
+    }
+
+    #cvFile {
+        display: none;
+    }
+
+    .file-name {
+        margin-top: 12px;
+        color: #315efb;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-group {
+        margin-top: 20px;
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    textarea,
+    input {
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #dce1ea;
+        border-radius: 9px;
+
+        outline: none;
+        font-size: 14px;
+
+        transition: 0.2s;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    textarea:focus,
+    input:focus {
+        border-color: #315efb;
+        box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.08);
+    }
+
+    /* =========================
+       BUTTON
+    ========================= */
+
+    .primary-btn {
+        width: 100%;
+
+        border: none;
+        border-radius: 9px;
+
+        padding: 14px;
+
+        background: #315efb;
+        color: white;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .primary-btn:hover {
+        background: #254bd5;
+    }
+
+    .primary-btn:disabled {
+        background: #aab4cc;
+        cursor: not-allowed;
+    }
+
+    /* =========================
+       PROCESS
+    ========================= */
+
+    .process-item {
+        background: #f7f9fc;
+        border-radius: 11px;
+
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .process-item h4 {
+        font-size: 14px;
+        margin-bottom: 7px;
+    }
+
+    .process-item p {
+        color: #68748a;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* =========================
+       MESSAGE
+    ========================= */
+
+    #message {
+        display: none;
+
+        margin-top: 16px;
+        padding: 12px;
+
+        border-radius: 9px;
+
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .success {
+        background: #eaf8f1;
+        color: #168653;
+    }
+
+    .error {
+        background: #fff0f0;
+        color: #d33b3b;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    #loading {
+        display: none;
+
+        text-align: center;
+
+        margin-top: 16px;
+
+        color: #657087;
+        font-size: 13px;
+    }
+
+    /* =========================
+       RESULT
+    ========================= */
+
+    #resultSection {
+        display: none;
+        margin-top: 25px;
+    }
+
+    .candidate-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 20px;
+    }
+
+    .candidate-name {
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .score-container {
+        text-align: right;
+    }
+
+    .score {
+        font-size: 34px;
+        font-weight: 800;
+        color: #315efb;
+    }
+
+    .score-label {
+        color: #7c879b;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .recommendation {
+        display: inline-block;
+
+        padding: 7px 13px;
+
+        border-radius: 20px;
+
+        background: #eaf8f1;
+        color: #168653;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        margin-bottom: 20px;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .result-box {
+        background: #f7f9fc;
+        border-radius: 10px;
+
+        padding: 16px;
+    }
+
+    .result-box h4 {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .result-box p {
+        color: #657087;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       SCHEDULER
+    ========================= */
+
+    #scheduler {
+        display: none;
+        margin-top: 25px;
+    }
+
+    .scheduler-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .scheduler-field {
+        margin-bottom: 15px;
+    }
+
+    /* =========================
+       SEND STATUS
+    ========================= */
+
+    #emailStatus {
+        display: none;
+
+        margin-top: 15px;
+        padding: 13px;
+
+        border-radius: 9px;
+
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .email-success {
+        display: block !important;
+        background: #eaf8f1;
+        color: #168653;
+    }
+
+    .email-error {
+        display: block !important;
+        background: #fff0f0;
+        color: #d33b3b;
+    }
+
+    .email-sending {
+        display: block !important;
+        background: #f1f4ff;
+        color: #315efb;
+    }
+
+    /* =========================
+       RANKING
+    ========================= */
+
+    .ranking {
+        margin-top: 25px;
+    }
+
+    .ranking-empty {
+        text-align: center;
+
+        color: #7b8497;
+
+        font-size: 13px;
+
+        padding: 25px;
+    }
+
+    .ranking-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 14px;
+
+        border-bottom: 1px solid #edf0f5;
+    }
+
+    .ranking-name {
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .ranking-recommendation {
+        color: #7b8497;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .ranking-score {
+        color: #315efb;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    footer {
+        text-align: center;
+
+        padding: 30px;
+
+        color: #8992a5;
+
+        font-size: 12px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 850px) {
+
+        .dashboard {
+            grid-template-columns: 1fr;
+        }
+
+        .result-grid,
+        .scheduler-grid {
+            grid-template-columns: 1fr;
+        }
+
+        nav {
+            padding: 0 5%;
+        }
+
+        main {
+            width: 92%;
+        }
+
+        .hero h1 {
+            font-size: 29px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav>
+
+    <div class="logo">
+        Talent<span>AI</span>
+    </div>
+
+    <div class="status">
+
+        <div class="status-dot"></div>
+
+        AI Screening System Online
+
+    </div>
+
+</nav>
+
+
+<main>
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <div class="hero">
+
+        <h1>
+            Candidate Screening Dashboard
+        </h1>
+
+        <p>
+            Upload a candidate's CV and let AI analyze
+            their skills, experience and suitability
+            for the position.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================= -->
+
+    <div class="dashboard">
+
+        <!-- SCREENING -->
+
+        <div class="card">
+
+            <div class="card-title">
+                Screen Candidate
+            </div>
+
+            <div class="card-subtitle">
+                Upload a PDF CV and provide the job
+                requirements.
+            </div>
+
+
+            <!-- CV UPLOAD -->
+
+            <label for="cvFile">
+
+                <div class="upload-box">
+
+                    <div class="upload-icon">
+                        📄
+                    </div>
+
+                    <h3>
+                        Upload Candidate CV
+                    </h3>
+
+                    <p>
+                        Click here to select a PDF file
+                    </p>
+
+                    <div
+                        class="file-name"
+                        id="fileName">
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="cvFile"
+                accept=".pdf">
+
+
+            <!-- JOB REQUIREMENTS -->
+
+            <div class="form-group">
+
+                <label for="jobRequirements">
+                    Job Requirements
+                </label>
+
+                <textarea
+                    id="jobRequirements"
+                    placeholder="Example: Python developer with FastAPI, REST APIs, SQL, Machine Learning and LLM experience."></textarea>
+
+            </div>
+
+
+            <!-- SCREEN BUTTON -->
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="screenButton">
+
+                🤖 Analyze Candidate with AI
+
+            </button>
+
+
+            <!-- LOADING -->
+
+            <div id="loading">
+
+                ⏳ AI is analyzing the candidate...
+
+            </div>
+
+
+            <!-- GENERAL MESSAGE -->
+
+            <div id="message"></div>
+
+        </div>
+
+
+        <!-- =========================
+             PROCESS CARD
+        ========================= -->
+
+        <div class="card">
+
+            <div class="card-title">
+                AI Screening Process
+            </div>
+
+            <div class="card-subtitle">
+                TalentAI automatically evaluates candidates.
+            </div>
+
+
+            <div class="process-item">
+
+                <h4>
+                    01 — CV Parsing
+                </h4>
+
+                <p>
+                    Extract candidate information,
+                    skills and experience from the PDF.
+                </p>
+
+            </div>
+
+
+            <div class="process-item">
+
+                <h4>
+                    02 — AI Evaluation
+                </h4>
+
+                <p>
+                    Compare the candidate's profile
+                    against the job requirements.
+                </p>
+
+            </div>
+
+
+            <div class="process-item">
+
+                <h4>
+                    03 — Candidate Ranking
+                </h4>
+
+                <p>
+                    Generate a match score from 0 to 100
+                    and recommendation.
+                </p>
+
+            </div>
+
+
+            <div class="process-item">
+
+                <h4>
+                    04 — Interview
+                </h4>
+
+                <p>
+                    Schedule interviews and automatically
+                    send invitation emails.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RESULT
+    ========================= -->
+
+    <div
+        class="card"
+        id="resultSection">
+
+        <div class="card-title">
+            AI Screening Result
+        </div>
+
+        <div class="card-subtitle">
+            Candidate evaluation completed successfully.
+        </div>
+
+
+        <div class="candidate-header">
+
+            <div>
+
+                <div
+                    class="candidate-name"
+                    id="candidateName">
+
+                    Candidate
+
+                </div>
+
+                <div class="score-label">
+                    AI MATCH SCORE
+                </div>
+
+            </div>
+
+
+            <div class="score-container">
+
+                <div
+                    class="score"
+                    id="candidateScore">
+
+                    0
+
+                </div>
+
+                <div class="score-label">
+                    / 100
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="recommendation"
+            id="recommendation">
+
+            Maybe
+
+        </div>
+
+
+        <div class="result-grid">
+
+            <div class="result-box">
+
+                <h4>
+                    ✅ Matched Skills
+                </h4>
+
+                <p id="matchedSkills">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="result-box">
+
+                <h4>
+                    ❌ Missing Skills
+                </h4>
+
+                <p id="missingSkills">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="result-box">
+
+                <h4>
+                    💼 Experience
+                </h4>
+
+                <p id="experienceSummary">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="result-box">
+
+                <h4>
+                    🎯 Recommendation
+                </h4>
+
+                <p id="recommendationText">
+                    —
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SCHEDULER
+    ========================= -->
+
+    <div
+        class="card"
+        id="scheduler">
+
+        <div class="card-title">
+            Schedule Interview
+        </div>
+
+        <div class="card-subtitle">
+            Send an interview invitation to the candidate.
+        </div>
+
+
+        <div class="scheduler-grid">
+
+            <div class="scheduler-field">
+
+                <label for="scheduleName">
+                    Candidate Name
+                </label>
+
+                <input
+                    id="scheduleName"
+                    type="text"
+                    placeholder="Ahmed Khan">
+
+            </div>
+
+
+            <div class="scheduler-field">
+
+                <label for="scheduleEmail">
+                    Candidate Email
+                </label>
+
+                <input
+                    id="scheduleEmail"
+                    type="email"
+                    placeholder="candidate@email.com">
+
+            </div>
+
+
+            <div class="scheduler-field">
+
+                <label for="scheduleDate">
+                    Interview Date
+                </label>
+
+                <input
+                    id="scheduleDate"
+                    type="date">
+
+            </div>
+
+
+            <div class="scheduler-field">
+
+                <label for="scheduleTime">
+                    Interview Time
+                </label>
+
+                <input
+                    id="scheduleTime"
+                    type="time">
+
+            </div>
+
+        </div>
+
+
+        <div class="scheduler-field">
+
+            <label for="schedulePosition">
+                Position
+            </label>
+
+            <input
+                id="schedulePosition"
+                type="text"
+                placeholder="AI / Software Engineer">
+
+        </div>
+
+
+        <!-- SEND EMAIL BUTTON -->
+
+        <button
+            type="button"
+            class="primary-btn"
+            id="scheduleButton">
+
+            📧 Schedule Interview & Send Email
+
+        </button>
+
+
+        <!-- EMAIL STATUS -->
+
+        <div id="emailStatus"></div>
+
+    </div>
+
+
+    <!-- =========================
+         RANKING
+    ========================= -->
+
+    <div class="card ranking">
+
+        <div class="card-title">
+            Candidate Ranking
+        </div>
+
+        <div class="card-subtitle">
+            Candidates ranked by AI match score.
+        </div>
+
+
+        <div
+            class="ranking-empty"
+            id="ranking">
+
+            Screen candidates to build the ranking.
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    TalentAI — AI-Powered Candidate Screening System
+
+</footer>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    // =================================================
+    // FASTAPI BACKEND
+    // =================================================
+
+    const API_URL = "http://127.0.0.1:8000";
+
+
+    // =================================================
+    // CANDIDATES
+    // =================================================
+
+    let candidates = [];
+
+
+    // =================================================
+    // ELEMENTS
+    // =================================================
+
+    const cvFile =
+        document.getElementById("cvFile");
+
+    const screenButton =
+        document.getElementById("screenButton");
+
+    const scheduleButton =
+        document.getElementById("scheduleButton");
+
+
+    // =================================================
+    // FILE SELECTION
+    // =================================================
+
+    cvFile.addEventListener(
+        "change",
+        function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+
+                document.getElementById(
+                    "fileName"
+                ).textContent = "";
+
+                return;
+            }
+
+
+            if (
+                file.type !== "application/pdf" &&
+                !file.name.toLowerCase().endsWith(".pdf")
+            ) {
+
+                showMessage(
+                    "Please select a PDF CV.",
+                    "error"
+                );
+
+                this.value = "";
+
+                return;
+            }
+
+
+            document.getElementById(
+                "fileName"
+            ).textContent =
+                "Selected: " + file.name;
+
+        }
+    );
+
+
+    // =================================================
+    // SCREEN BUTTON EVENT
+    // =================================================
+
+    screenButton.addEventListener(
+        "click",
+        screenCandidate
+    );
+
+
+    // =================================================
+    // SCHEDULE BUTTON EVENT
+    // =================================================
+
+    scheduleButton.addEventListener(
+        "click",
+        scheduleInterview
+    );
+
+
+    // =================================================
+    // SCREEN CANDIDATE
+    // =================================================
+
+    async function screenCandidate() {
+
+        const file =
+            cvFile.files[0];
+
+
+        const jobRequirements =
+            document
+                .getElementById("jobRequirements")
+                .value
+                .trim();
+
+
+        if (!file) {
+
+            showMessage(
+                "Please upload a PDF CV.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!jobRequirements) {
+
+            showMessage(
+                "Please enter the job requirements.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        screenButton.disabled = true;
+
+        screenButton.textContent =
+            "⏳ Analyzing Candidate...";
+
+
+        document.getElementById(
+            "loading"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "message"
+        ).style.display = "none";
+
+
+        try {
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "file",
+                file
+            );
+
+
+            formData.append(
+                "job_requirements",
+                jobRequirements
+            );
+
+
+            const response =
+                await fetch(
+                    `${API_URL}/score-cv`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch {
+
+                throw new Error(
+                    "Backend returned an invalid response."
+                );
+
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Failed to analyze candidate."
+                );
+
+            }
+
+
+            if (!data.screening) {
+
+                throw new Error(
+                    "AI screening result was not returned."
+                );
+
+            }
+
+
+            displayResult(
+                data.screening
+            );
+
+
+            showMessage(
+                "✅ Candidate analyzed successfully!",
+                "success"
+            );
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Screening error:",
+                error
+            );
+
+
+            showMessage(
+                "❌ " + error.message,
+                "error"
+            );
+
+        }
+
+
+        finally {
+
+            screenButton.disabled = false;
+
+            screenButton.textContent =
+                "🤖 Analyze Candidate with AI";
+
+
+            document.getElementById(
+                "loading"
+            ).style.display = "none";
+
+        }
+
+    }
+
+
+    // =================================================
+    // DISPLAY AI RESULT
+    // =================================================
+
+    function displayResult(result) {
+
+        document.getElementById(
+            "resultSection"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "candidateName"
+        ).textContent =
+            result.candidate_name ||
+            "Candidate";
+
+
+        document.getElementById(
+            "candidateScore"
+        ).textContent =
+            Number(result.score) || 0;
+
+
+        document.getElementById(
+            "recommendation"
+        ).textContent =
+            result.recommendation ||
+            "Maybe";
+
+
+        document.getElementById(
+            "matchedSkills"
+        ).textContent =
+            Array.isArray(result.matched_skills)
+                ? result.matched_skills.join(", ")
+                : "None";
+
+
+        document.getElementById(
+            "missingSkills"
+        ).textContent =
+            Array.isArray(result.missing_skills)
+                ? result.missing_skills.join(", ")
+                : "None";
+
+
+        document.getElementById(
+            "experienceSummary"
+        ).textContent =
+            result.experience_summary ||
+            "Not available";
+
+
+        document.getElementById(
+            "recommendationText"
+        ).textContent =
+            result.recommendation ||
+            "Maybe";
+
+
+        // ---------------------------------------------
+        // SAVE CANDIDATE
+        // ---------------------------------------------
+
+        candidates.push({
+
+            candidate_name:
+                result.candidate_name ||
+                "Candidate",
+
+            score:
+                Number(result.score) || 0,
+
+            recommendation:
+                result.recommendation ||
+                "Maybe"
+
+        });
+
+
+        updateRanking();
+
+
+        // ---------------------------------------------
+        // FILL CANDIDATE NAME
+        // ---------------------------------------------
+
+        document.getElementById(
+            "scheduleName"
+        ).value =
+            result.candidate_name ||
+            "";
+
+
+        // ---------------------------------------------
+        // SHOW SCHEDULER
+        // ---------------------------------------------
+
+        document.getElementById(
+            "scheduler"
+        ).style.display =
+            "block";
+
+
+        // ---------------------------------------------
+        // SCROLL
+        // ---------------------------------------------
+
+        document.getElementById(
+            "resultSection"
+        ).scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    // =================================================
+    // UPDATE RANKING
+    // =================================================
+
+    function updateRanking() {
+
+        candidates.sort(
+            (a, b) =>
+                b.score - a.score
+        );
+
+
+        const ranking =
+            document.getElementById(
+                "ranking"
+            );
+
+
+        ranking.innerHTML = "";
+
+
+        candidates.forEach(
+            (candidate, index) => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "ranking-row";
+
+
+                row.innerHTML = `
+
+                    <div>
+
+                        <div class="ranking-name">
+
+                            #${index + 1}
+                            ${escapeHtml(
+                                candidate.candidate_name
+                            )}
+
+                        </div>
+
+                        <div class="ranking-recommendation">
+
+                            ${escapeHtml(
+                                candidate.recommendation
+                            )}
+
+                        </div>
+
+                    </div>
+
+                    <div class="ranking-score">
+
+                        ${candidate.score}/100
+
+                    </div>
+
+                `;
+
+
+                ranking.appendChild(row);
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // SCHEDULE INTERVIEW
+    // =================================================
+
+    async function scheduleInterview() {
+
+        const name =
+            document
+                .getElementById("scheduleName")
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById("scheduleEmail")
+                .value
+                .trim();
+
+
+        const date =
+            document
+                .getElementById("scheduleDate")
+                .value;
+
+
+        const time =
+            document
+                .getElementById("scheduleTime")
+                .value;
+
+
+        const position =
+            document
+                .getElementById("schedulePosition")
+                .value
+                .trim();
+
+
+        // =================================================
+        // VALIDATION
+        // =================================================
+
+        if (!name) {
+
+            showEmailStatus(
+                "Please enter the candidate name.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!email) {
+
+            showEmailStatus(
+                "Please enter the candidate email.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        // Check email format
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (!emailPattern.test(email)) {
+
+            showEmailStatus(
+                "Please enter a valid email address.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!date) {
+
+            showEmailStatus(
+                "Please select the interview date.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!time) {
+
+            showEmailStatus(
+                "Please select the interview time.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!position) {
+
+            showEmailStatus(
+                "Please enter the position.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // DISABLE BUTTON
+        // =================================================
+
+        scheduleButton.disabled = true;
+
+        scheduleButton.textContent =
+            "📧 Sending Invitation...";
+
+
+        showEmailStatus(
+            "⏳ Connecting to FastAPI and sending the interview invitation...",
+            "sending"
+        );
+
+
+        try {
+
+            // =================================================
+            // REQUEST BODY
+            // =================================================
+
+            const requestBody = {
+
+                candidate_name:
+                    name,
+
+                candidate_email:
+                    email,
+
+                interview_date:
+                    date,
+
+                interview_time:
+                    time,
+
+                position:
+                    position
+
+            };
+
+
+            console.log(
+                "Sending interview request:",
+                requestBody
+            );
+
+
+            // =================================================
+            // SEND TO FASTAPI
+            // =================================================
+
+            const response =
+                await fetch(
+                    `${API_URL}/schedule-interview`,
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                requestBody
+                            )
+
+                    }
+                );
+
+
+            // =================================================
+            // READ RESPONSE
+            // =================================================
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch {
+
+                throw new Error(
+                    "FastAPI returned an invalid response."
+                );
+
+            }
+
+
+            console.log(
+                "FastAPI response:",
+                data
+            );
+
+
+            // =================================================
+            // CHECK RESPONSE
+            // =================================================
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "FastAPI could not send the email."
+                );
+
+            }
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            showEmailStatus(
+                "✅ Interview scheduled successfully! The invitation email has been sent to " +
+                email,
+                "success"
+            );
+
+
+            // Clear date/time/position after successful send
+
+            document.getElementById(
+                "scheduleDate"
+            ).value = "";
+
+
+            document.getElementById(
+                "scheduleTime"
+            ).value = "";
+
+
+            document.getElementById(
+                "schedulePosition"
+            ).value = "";
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Interview scheduling error:",
+                error
+            );
+
+
+            showEmailStatus(
+                "❌ " + error.message,
+                "error"
+            );
+
+        }
+
+
+        finally {
+
+            scheduleButton.disabled = false;
+
+            scheduleButton.textContent =
+                "📧 Schedule Interview & Send Email";
+
+        }
+
+    }
+
+
+    // =================================================
+    // GENERAL MESSAGE
+    // =================================================
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        message.textContent =
+            text;
+
+
+        message.className =
+            type;
+
+
+        message.style.display =
+            "block";
+
+    }
+
+
+    // =================================================
+    // EMAIL STATUS
+    // =================================================
+
+    function showEmailStatus(
+        text,
+        type
+    ) {
+
+        const status =
+            document.getElementById(
+                "emailStatus"
+            );
+
+
+        status.textContent =
+            text;
+
+
+        status.className = "";
+
+
+        if (type === "success") {
+
+            status.classList.add(
+                "email-success"
+            );
+
+        }
+
+
+        else if (type === "error") {
+
+            status.classList.add(
+                "email-error"
+            );
+
+        }
+
+
+        else if (type === "sending") {
+
+            status.classList.add(
+                "email-sending"
+            );
+
+        }
+
+
+        status.style.display =
+            "block";
+
+    }
+
+
+    // =================================================
+    // HTML ESCAPING
+    // =================================================
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            text ?? "";
+
+
+        return div.innerHTML;
+
+    }
+
+</script>
+```
+
+</body>
+
+</html>

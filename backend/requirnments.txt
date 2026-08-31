@@ -1,0 +1,8 @@
+fastapi[standard]
+uvicorn
+python-multipart
+python-dotenv
+google-genai
+pypdf
+fastapi-mail
+email-validator
