@@ -419,7 +419,7 @@ import io
 import json
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pypdf import PdfReader
 from google import genai
@@ -799,7 +799,7 @@ async def upload_cv(
 @app.post("/score-cv")
 async def score_cv(
     file: UploadFile = File(...),
-    job_requirements: str = ""
+    job_requirements: str = Form(...)
 ):
 
     # =====================================================
